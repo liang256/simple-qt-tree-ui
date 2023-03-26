@@ -51,7 +51,6 @@ class MainWindow(QtWidgets.QMainWindow):
         item.setCheckState(0, QtCore.Qt.Unchecked)
         item.setText(0, f'Item {self.item_counter}')
         self.item_counter += 1
-        self.treeWidget.setCurrentItem(item)
 
     def delete_item(self):
         item = self.treeWidget.currentItem()
