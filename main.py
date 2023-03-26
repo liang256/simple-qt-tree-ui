@@ -15,6 +15,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.treeWidget = QtWidgets.QTreeWidget()
         self.treeWidget.setHeaderLabels(['Title'])
         self.treeWidget.setColumnWidth(0, 200)
+        self.treeWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+        self.treeWidget.currentItemChanged.connect(self.highlight_current_selection)
+        self.treeWidget.itemChanged.connect(self.check_child_items)
 
         self.add_button = QtWidgets.QPushButton('Add')
         self.add_button.clicked.connect(self.add_item)
@@ -66,6 +69,24 @@ class MainWindow(QtWidgets.QMainWindow):
         for i in range(item.childCount()):
             child = item.child(i)
             self.traverse_tree(child, selections)
+
+    def highlight_current_selection(self, current, prev):
+        self.highlight_item(prev, False)
+        self.highlight_item(current, True)
+
+    def highlight_item(self, item, highlight):
+        font = item.font(0)
+        if highlight:
+            font.setBold(True)
+        else:
+            font.setBold(False)
+        item.setFont(0, font)
+
+    def check_child_items(self, item):
+        if item.checkState(0) == QtCore.Qt.Checked:
+            for i in range(item.childCount()):
+                child = item.child(i)
+                child.setCheckState(0, QtCore.Qt.Checked)
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
