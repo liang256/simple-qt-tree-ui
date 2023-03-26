@@ -5,6 +5,8 @@ class TreeWidgetItem(QtWidgets.QTreeWidgetItem):
     def __init__(self, parent=None):
         super(TreeWidgetItem, self).__init__(parent)
         self.setExpanded(True)
+        self.setFlags(QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+        self.setCheckState(0, QtCore.Qt.Unchecked)
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -20,12 +22,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.delete_button = QtWidgets.QPushButton('Delete')
         self.delete_button.clicked.connect(self.delete_item)
 
+        self.list_button = QtWidgets.QPushButton('List Selections')
+        self.list_button.clicked.connect(self.list_selections)
+
         main_layout = QtWidgets.QVBoxLayout()
         main_layout.addWidget(self.treeWidget)
 
         button_layout = QtWidgets.QHBoxLayout()
         button_layout.addWidget(self.add_button)
         button_layout.addWidget(self.delete_button)
+        button_layout.addWidget(self.list_button)
         main_layout.addLayout(button_layout)
 
         central_widget = QtWidgets.QWidget()
@@ -44,6 +50,15 @@ class MainWindow(QtWidgets.QMainWindow):
         item = self.treeWidget.currentItem()
         if item:
             (item.parent() or self.treeWidget.invisibleRootItem()).removeChild(item)
+
+    def list_selections(self):
+        selections = []
+        root = self.treeWidget.invisibleRootItem()
+        for i in range(root.childCount()):
+            child = root.child(i)
+            if child.checkState(0) == QtCore.Qt.Checked:
+                selections.append(child.text(0))
+        print('Selections:', selections)
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
