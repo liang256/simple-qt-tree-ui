@@ -38,12 +38,15 @@ class MainWindow(QtWidgets.QMainWindow):
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
 
+        self.item_counter = 0
+
     def add_item(self):
         parent = self.treeWidget.currentItem()
         if not parent:
             parent = self.treeWidget.invisibleRootItem()
         item = TreeWidgetItem(parent)
-        item.setText(0, 'New Item')
+        item.setText(0, f'Item {self.item_counter}')
+        self.item_counter += 1
         self.treeWidget.setCurrentItem(item)
 
     def delete_item(self):
