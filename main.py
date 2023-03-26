@@ -45,6 +45,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not parent:
             parent = self.treeWidget.invisibleRootItem()
         item = TreeWidgetItem(parent)
+        item.setCheckState(0, QtCore.Qt.Unchecked)
         item.setText(0, f'Item {self.item_counter}')
         self.item_counter += 1
         self.treeWidget.setCurrentItem(item)
@@ -56,12 +57,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def list_selections(self):
         selections = []
-        root = self.treeWidget.invisibleRootItem()
-        for i in range(root.childCount()):
-            child = root.child(i)
-            if child.checkState(0) == QtCore.Qt.Checked:
-                selections.append(child.text(0))
+        self.traverse_tree(self.treeWidget.invisibleRootItem(), selections)
         print('Selections:', selections)
+
+    def traverse_tree(self, item, selections):
+        if item.checkState(0) == QtCore.Qt.Checked:
+            selections.append(item.text(0))
+        for i in range(item.childCount()):
+            child = item.child(i)
+            self.traverse_tree(child, selections)
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
